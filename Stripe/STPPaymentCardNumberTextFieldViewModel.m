@@ -147,7 +147,7 @@
 }
 
 - (NSString *)defaultPlaceholder {
-    return @"4242424242424242";
+    return @"Kartın Numarası";
 }
 
 + (NSSet<NSString *> *)keyPathsForValuesAffectingValid {
