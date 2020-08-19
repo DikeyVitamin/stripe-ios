@@ -57,6 +57,7 @@
 #import "STPMandateOnlineParams.h"
 #import "STPPaymentActivityIndicatorView.h"
 #import "STPPaymentCardTextField.h"
+#import "STPPaymentCardNumberTextField.h"
 #import "STPPaymentConfiguration.h"
 #import "STPPaymentContext.h"
 #import "STPPaymentHandler.h"

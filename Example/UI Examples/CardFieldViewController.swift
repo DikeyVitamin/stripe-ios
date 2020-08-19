@@ -11,7 +11,7 @@ import Stripe
 
 class CardFieldViewController: UIViewController {
 
-    let cardField = STPPaymentCardTextField()
+    let cardField = STPPaymentCardNumberTextField()
     var theme = STPTheme.default()
 
     override func viewDidLoad() {
