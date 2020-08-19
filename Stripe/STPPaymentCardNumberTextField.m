@@ -173,7 +173,6 @@ CGFloat const STPPaymentCardNumberTextFieldMinimumPadding = 10;
     self.focusedTextFieldForLayout = nil;
     [self resetSubviewEditingTransitionState];
     
-    self.viewModel.postalCodeRequested = YES;
     self.countryCode = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
 }
 
@@ -497,34 +496,6 @@ CGFloat const STPPaymentCardNumberTextFieldMinimumPadding = 10;
 
 - (NSString *)cardNumber {
     return self.viewModel.cardNumber;
-}
-
-- (NSUInteger)expirationMonth {
-    return [self.viewModel.expirationMonth integerValue];
-}
-
-- (NSUInteger)expirationYear {
-    return [self.viewModel.expirationYear integerValue];
-}
-
-- (NSString *)formattedExpirationMonth {
-    return self.viewModel.expirationMonth;
-}
-
-- (NSString *)formattedExpirationYear {
-    return self.viewModel.expirationYear;
-}
-
-- (NSString *)cvc {
-    return self.viewModel.cvc;
-}
-
-- (NSString *)postalCode {
-    if (self.postalCodeEntryEnabled) {
-        return self.viewModel.postalCode;
-    } else {
-        return nil;
-    }
 }
 
 - (STPPaymentMethodCardParams *)cardParams {
@@ -971,15 +942,7 @@ typedef void (^STPLayoutAnimationCompletionBlock)(BOOL completed);
             self.viewModel.cardNumber = input.string;
             [self setNeedsLayout];
             break;
-        case STPCardFieldTypeExpiration:
-            self.viewModel.rawExpiration = input.string;
-            break;
-        case STPCardFieldTypeCVC:
-            self.viewModel.cvc = input.string;
-            break;
-        case STPCardFieldTypePostalCode:
-            self.viewModel.postalCode = input.string;
-            [self setNeedsLayout];
+        default:
             break;
     }
     
