@@ -615,22 +615,6 @@ CGFloat const STPPaymentCardNumberTextFieldMinimumPadding = 10;
     }
 }
 
-- (CGFloat)numberFieldCompressedWidth {
-
-    NSString *cardNumber = self.cardNumber;
-    if (cardNumber.length == 0) {
-        cardNumber = self.viewModel.defaultPlaceholder;
-    }
-
-    STPCardBrand currentBrand = [STPCardValidator brandForNumber:cardNumber];
-    NSArray<NSNumber *> *sortedCardNumberFormat = [[STPCardValidator cardNumberFormatForCardNumber:cardNumber] sortedArrayUsingSelector:@selector(unsignedIntegerValue)];
-    NSUInteger fragmentLength = [STPCardValidator fragmentLengthForCardBrand:currentBrand];
-    NSUInteger maxLength = MAX([[sortedCardNumberFormat lastObject] unsignedIntegerValue], fragmentLength);
-
-    NSString *maxCompressedString = [@"" stringByPaddingToLength:maxLength withString:@"8" startingAtIndex:0];
-    return [self widthForText:maxCompressedString];
-}
-
 - (CGSize)intrinsicContentSize {
 
     CGSize imageSize = self.brandImage.size;
@@ -667,7 +651,7 @@ typedef NS_ENUM(NSInteger, STPCardTextFieldState) {
 
     if (panVisibility != STPCardTextFieldStateHidden) {
         paddingsRequired += 1;
-        requiredWidth += (panVisibility == STPCardTextFieldStateCompressed) ? [self numberFieldCompressedWidth] : [self numberFieldFullWidth];
+        requiredWidth += [self numberFieldFullWidth];
     }
     
     if (paddingsRequired > 0) {
@@ -830,10 +814,9 @@ typedef NS_ENUM(NSInteger, STPCardTextFieldState) {
         NSString *cardNumberToHide = [(hasEnteredCardNumber ? self.cardNumber : self.numberPlaceholder) stp_stringByRemovingSuffix:compressedCardNumber];
 
         if (cardNumberToHide.length > 0 && [STPCardValidator stringIsNumeric:cardNumberToHide]) {
-            width = hasEnteredCardNumber ? [self widthForCardNumber:self.cardNumber] : [self numberFieldFullWidth];
+            width = [self numberFieldFullWidth];
 
             CGFloat hiddenWidth = [self widthForCardNumber:cardNumberToHide];
-            xOffset -= hiddenWidth;
             UIView *maskView = [[UIView alloc] initWithFrame:CGRectMake(hiddenWidth,
                                                                         0,
                                                                         (width - hiddenWidth),
@@ -850,7 +833,6 @@ typedef NS_ENUM(NSInteger, STPCardTextFieldState) {
                 self.numberField.maskView = maskView;
             }];
         } else {
-            width = [self numberFieldCompressedWidth];
             [UIView performWithoutAnimation:^{
                 self.numberField.maskView = nil;
             }];
@@ -860,18 +842,11 @@ typedef NS_ENUM(NSInteger, STPCardTextFieldState) {
         [UIView performWithoutAnimation:^{
             self.numberField.maskView = nil;
         }];
-
-        if (panVisibility == STPCardTextFieldStateHidden) {
-            // Need to lower xOffset so pan is fully off screen
-            xOffset = xOffset - width - hPadding;
-        }
     }
-    
-    CGFloat additionalWidth = [self widthForText:@"8"];
-    
+        
     xOffset += (self.brandImageView.frame.origin.x + self.brandImageView.bounds.size.width);
 
-    self.numberField.frame = CGRectMake(xOffset, 0, width + additionalWidth, fieldsHeight);
+    self.numberField.frame = CGRectMake(xOffset, 0, bounds.size.width - xOffset - hPadding, fieldsHeight);
 
 }
 
